@@ -1,0 +1,7 @@
+sudo make    （调用第一个命令default）
+这时，在hello.c 所在文件夹就会有 hello.ko ，这个就是我们需要的内核模块啦
+#sudo make clean
+清理编译垃圾，hello.ko 也会清理掉。
+4. 插入模块，让其工作。注意必须是root权限
+#sudo insmod ./hello.ko
+我们用dmesg 就可以看到 产生的内核信息啦，Hello world!
