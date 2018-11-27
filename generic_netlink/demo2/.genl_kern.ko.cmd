@@ -1,0 +1,1 @@
+cmd_/home/hfs/module/generic_netlink/demo2/genl_kern.ko := ld -r -m elf_i386 -T ./scripts/module-common.lds --build-id  -o /home/hfs/module/generic_netlink/demo2/genl_kern.ko /home/hfs/module/generic_netlink/demo2/genl_kern.o /home/hfs/module/generic_netlink/demo2/genl_kern.mod.o ;  true
