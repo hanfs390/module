@@ -1,0 +1,57 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+EXMPL_A_MAX	kernel_genl.c	15;"	d	file:
+EXMPL_A_MAX	user_genl.c	37;"	d	file:
+EXMPL_A_MSG	kernel_genl.c	/^        EXMPL_A_MSG,$/;"	e	enum:__anon1	file:
+EXMPL_A_MSG	user_genl.c	/^        EXMPL_A_MSG,$/;"	e	enum:__anon3	file:
+EXMPL_A_PRINT	kernel_genl.c	/^	EXMPL_A_PRINT,$/;"	e	enum:__anon1	file:
+EXMPL_A_PRINT	user_genl.c	/^	EXMPL_A_PRINT,$/;"	e	enum:__anon3	file:
+EXMPL_A_UNSPEC	kernel_genl.c	/^        EXMPL_A_UNSPEC, \/* default *\/$/;"	e	enum:__anon1	file:
+EXMPL_A_UNSPEC	user_genl.c	/^        EXMPL_A_UNSPEC,$/;"	e	enum:__anon3	file:
+EXMPL_C_ECHO	kernel_genl.c	/^        EXMPL_C_ECHO,$/;"	e	enum:__anon2	file:
+EXMPL_C_ECHO	user_genl.c	/^        EXMPL_C_ECHO,$/;"	e	enum:__anon4	file:
+EXMPL_C_MAX	kernel_genl.c	23;"	d	file:
+EXMPL_C_PRINT	kernel_genl.c	/^	EXMPL_C_PRINT,$/;"	e	enum:__anon2	file:
+EXMPL_C_PRINT	user_genl.c	/^	EXMPL_C_PRINT,$/;"	e	enum:__anon4	file:
+EXMPL_C_UNSPEC	kernel_genl.c	/^        EXMPL_C_UNSPEC,$/;"	e	enum:__anon2	file:
+EXMPL_C_UNSPEC	user_genl.c	/^        EXMPL_C_UNSPEC,$/;"	e	enum:__anon4	file:
+GENLMSG_DATA	user_genl.c	18;"	d	file:
+KERNELBUILD	Makefile	/^KERNELBUILD :=\/lib\/modules\/$(shell uname -r)\/build$/;"	m
+MAX_MSG_SIZE	user_genl.c	17;"	d	file:
+NLA_DATA	user_genl.c	19;"	d	file:
+__EXMPL_A_MAX	kernel_genl.c	/^        __EXMPL_A_MAX,$/;"	e	enum:__anon1	file:
+__EXMPL_A_MAX	user_genl.c	/^        __EXMPL_A_MAX,$/;"	e	enum:__anon3	file:
+__EXMPL_C_ECHO	user_genl.c	/^        __EXMPL_C_ECHO,$/;"	e	enum:__anon4	file:
+__EXMPL_C_MAX	kernel_genl.c	/^        __EXMPL_C_MAX,$/;"	e	enum:__anon2	file:
+__cached_gcc_-print-file-name_include	.cache.mk	/^__cached_gcc_-print-file-name_include := \/usr\/lib\/gcc\/i686-linux-gnu\/5\/include$/;"	m
+_genl_register_family_with_ops_grps	kernel_genl.c	/^_genl_register_family_with_ops_grps(struct genl_family *family,$/;"	f	file:
+data	user_genl.c	/^    char data[MAX_MSG_SIZE];$/;"	m	struct:msgtemplate	file:
+exmpl_echo	kernel_genl.c	/^int exmpl_echo(struct sk_buff *skb, struct genl_info *info)$/;"	f
+exmpl_genl_policy	kernel_genl.c	/^static struct nla_policy exmpl_genl_policy[EXMPL_A_MAX + 1] = {$/;"	v	typeref:struct:nla_policy	file:
+exmpl_genl_policy	user_genl.c	/^static struct nla_policy exmpl_genl_policy[EXMPL_A_MAX + 1] = {$/;"	v	typeref:struct:nla_policy	file:
+exmpl_print	kernel_genl.c	/^int exmpl_print(struct sk_buff *skb, struct genl_info *info)$/;"	f
+family	kernel_genl.c	/^static struct genl_family family = {$/;"	v	typeref:struct:genl_family	file:
+g	user_genl.c	/^    struct genlmsghdr g;$/;"	m	struct:msgtemplate	typeref:struct:msgtemplate::genlmsghdr	file:
+gcc-goto.sh_gcc_-Wall_-Wundef_-Wstrict-prototypes_-Wno-trigraphs_-fno-strict-aliasing_-fno-common_-fshort-wchar_-Werror-implicit-function-declaration_-Wno-format-security_-std_gnu89_-fno-PIE_-mno-sse_-mno-mmx_-mno-sse2_-mno-3dnow_-mno-avx_-m32_-msoft-float_-mregparm_3_-freg-struct-return_-fno-pic_-mpreferred-stack-boundary_2__-march_i686_-mtune_generic_-Wa_-mtune_generic32_-ffreestanding_-DCONFIG_AS_CFI_1_-DCONFIG_AS_CFI_SIGNAL_FRAME_1_-DCONFIG_AS_CFI_SECTIONS_1__-DCONFIG_AS_SSSE3_1_-DCONFIG_AS_CRC32_1_-DCONFIG_AS_AVX_1_-DCONFIG_AS_AVX2_1_-DCONFIG_AS_AVX512_1_-DCONFIG_AS_SHA1_NI_1_-DCONFIG_AS_SHA256_NI_1_-pipe_-Wno-sign-compare_-fno-asynchronous-unwind-tables_-mindirect-branch_thunk-extern_-mindirect-branch-register_-DRETPOLINE_-fno-delete-null-pointer-checks_____-O2__--param_allow-store-data-races_0	.cache.mk	/^__cached_\/bin\/bash_.\/scripts\/gcc-goto.sh_gcc_-Wall_-Wundef_-Wstrict-prototypes_-Wno-trigraphs_-fno-strict-aliasing_-fno-common_-fshort-wchar_-Werror-implicit-function-declaration_-Wno-format-security_-std_gnu89_-fno-PIE_-mno-sse_-mno-mmx_-mno-sse2_-mno-3dnow_-mno-avx_-m32_-msoft-float_-mregparm_3_-freg-struct-return_-fno-pic_-mpreferred-stack-boundary_2__-march_i686_-mtune_generic_-Wa_-mtune_generic32_-ffreestanding_-DCONFIG_AS_CFI_1_-DCONFIG_AS_CFI_SIGNAL_FRAME_1_-DCONFIG_AS_CFI_SECTIONS_1__-DCONFIG_AS_SSSE3_1_-DCONFIG_AS_CRC32_1_-DCONFIG_AS_AVX_1_-DCONFIG_AS_AVX2_1_-DCONFIG_AS_AVX512_1_-DCONFIG_AS_SHA1_NI_1_-DCONFIG_AS_SHA256_NI_1_-pipe_-Wno-sign-compare_-fno-asynchronous-unwind-tables_-mindirect-branch_thunk-extern_-mindirect-branch-register_-DRETPOLINE_-fno-delete-null-pointer-checks_____-O2__--param_allow-store-data-races_0 := y$/;"	m
+gcc-version.sh_-p_gcc	.cache.mk	/^__cached_\/bin\/bash_.\/scripts\/gcc-version.sh_-p_gcc := 050400$/;"	m
+gcc-version.sh_gcc	.cache.mk	/^__cached_\/bin\/bash_.\/scripts\/gcc-version.sh_gcc := 0504$/;"	m
+genl_exit	kernel_genl.c	/^module_exit(genl_exit);$/;"	v
+genl_exit	kernel_genl.c	/^static void __exit genl_exit(void)$/;"	f	file:
+genl_fill_int_reply	kernel_genl.c	/^static int genl_fill_int_reply(struct sk_buff *msg, u32 portid, u32 seq, int flags, int reply)$/;"	f	file:
+genl_fill_string_reply	kernel_genl.c	/^static int genl_fill_string_reply(struct sk_buff *msg, u32 portid, u32 seq, int flags, char * reply_data)$/;"	f	file:
+genl_get_family_id	user_genl.c	/^static int genl_get_family_id(int sd, char *family_name)$/;"	f	file:
+genl_init	kernel_genl.c	/^module_init(genl_init);$/;"	v
+genl_init	kernel_genl.c	/^static int  __init genl_init(void)$/;"	f	file:
+genl_rcv_msg	user_genl.c	/^void genl_rcv_msg(int family_id, int sock, void *data)$/;"	f
+genl_register_family_with_ops	kernel_genl.c	53;"	d	file:
+genl_send_msg	user_genl.c	/^int genl_send_msg(int sd, u_int16_t nlmsg_type, u_int32_t nlmsg_pid,$/;"	f
+main	user_genl.c	/^int  main(void)$/;"	f
+msgtemplate	user_genl.c	/^typedef struct msgtemplate {$/;"	s	file:
+msgtemplate_t	user_genl.c	/^} msgtemplate_t;$/;"	t	typeref:struct:msgtemplate	file:
+n	user_genl.c	/^    struct nlmsghdr n;$/;"	m	struct:msgtemplate	typeref:struct:msgtemplate::nlmsghdr	file:
+obj-m	Makefile	/^obj-m := kernel_genl.o$/;"	m
+ops	kernel_genl.c	/^struct genl_ops ops[] = { $/;"	v	typeref:struct:genl_ops

@@ -1,0 +1,14 @@
+/*********************************************************
+	this demo is a ping process.
+----------------------------------------------------------
+function:
+	echo:
+		user send a string (123456) to kernel
+	
+		kernel reply string (1234567) to user
+	print:
+		user send string (Hello World !) to kernel
+	
+		kernel reply unsigned int (1) to user
+
+**********************************************************/
