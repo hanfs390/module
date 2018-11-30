@@ -1,0 +1,9 @@
+/************************************************************
+	all the demos are under linux 4.15.0.39-generic 
+	
+	demo1: echo
+	demo2: multi-cmds and multi-attrs
+	demo3: user program and kernel module have the same .h
+	demo4: has better makefile
+
+*************************************************************/

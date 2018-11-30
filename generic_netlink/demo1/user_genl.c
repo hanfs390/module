@@ -9,11 +9,15 @@
 #include <poll.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <signal.h>
 
 #include <linux/genetlink.h>
+#include <netlink/attr.h>
+#include <netlink/genl/genl.h>
 
 #define MAX_MSG_SIZE 128
+#define GENLMSG_DATA(glh) ((void *)(NLMSG_DATA(glh) + GENL_HDRLEN))
+#define GENLMSG_PAYLOAD(glh) (NLMSG_PAYLOAD(glh, 0) - GENL_HDRLEN)
+#define NLA_DATA(na) ((void *)((char*)(na) + NLA_HDRLEN))
 
 typedef struct msgtemplate {
     struct nlmsghdr n;
@@ -22,31 +26,65 @@ typedef struct msgtemplate {
 } msgtemplate_t;
 
 
-#define GENLMSG_DATA(glh)       ((void *)(NLMSG_DATA(glh) + GENL_HDRLEN))
-#define NLA_DATA(na)            ((void *)((char *)(na) + NLA_HDRLEN))
+
+/* attribute type */
+enum {
+        EXMPL_A_UNSPEC,
+        EXMPL_A_MSG,
+	EXMPL_A_PRINT,
+        __EXMPL_A_MAX,
+};
+#define EXMPL_A_MAX (__EXMPL_A_MAX - 1)
+
+/* cmd */
+enum {
+        EXMPL_C_UNSPEC,
+        EXMPL_C_ECHO,
+	EXMPL_C_PRINT,
+        __EXMPL_C_ECHO,
+};
+
+/* attribute policy */
+static struct nla_policy exmpl_genl_policy[EXMPL_A_MAX + 1] = {
+         [EXMPL_A_MSG] = { .type = NLA_STRING },
+};
 
 /*
- * genl_rcv_msg - 
- * @fid: 
+ * genl_rcv_msg - recv the msg from kernel module 
+ * @family_id :  genl family id 
+ * @sock : the sock of genl
+ * @data : the message from kernel
  */
-void genl_rcv_msg(int fid, int sock, char **string)
+void genl_rcv_msg(int family_id, int sock, char *data)
 {
     int ret;
     struct msgtemplate msg;
     struct nlattr *na;
+    struct genlmsghdr *gnlh;
+    struct nlmsghdr *nlh;
+    struct nlattr *attrs[EXMPL_A_MAX + 1];
+    int len;
 
     ret = recv(sock, &msg, sizeof(msg), 0);
     if (ret < 0) {
         return;
     }
-    //printf("received length %d\n", ret);
-    if (msg.n.nlmsg_type == NLMSG_ERROR || !NLMSG_OK((&msg.n), ret)) {
-        return;
+    printf("received length %d\n", ret);
+
+    gnlh = &msg.g;
+    nlh = &msg.n;
+    genlmsg_parse(nlh, 0, attrs, EXMPL_A_MAX, exmpl_genl_policy);    
+    
+    switch (gnlh->cmd) {
+	case EXMPL_C_ECHO:
+		if (attrs[EXMPL_A_MSG]){
+			len = nla_len(attrs[EXMPL_A_MSG]);
+			memcpy(data, nla_data(attrs[EXMPL_A_MSG]), len);
+			printf("recevic data = %s\n", data);
+		}
+
     }
-    if (msg.n.nlmsg_type == fid && fid != 0) {
-        na = (struct nlattr *) GENLMSG_DATA(&msg);
-        *string = (char *)NLA_DATA(na);
-    }
+
 } 
 
 /** 
@@ -73,9 +111,11 @@ int genl_send_msg(int sd, u_int16_t nlmsg_type, u_int32_t nlmsg_pid,
     struct sockaddr_nl nladdr;
     int r, buflen;
     char *buf;
+
+	
     msgtemplate_t msg;
 
-
+    printf("send is start\n");
     if (nlmsg_type == 0) {
         return 0;
     }
@@ -84,6 +124,7 @@ int genl_send_msg(int sd, u_int16_t nlmsg_type, u_int32_t nlmsg_pid,
     msg.n.nlmsg_type = nlmsg_type;
     msg.n.nlmsg_flags = NLM_F_REQUEST;
     msg.n.nlmsg_seq = 0;
+    printf("1\n"); 
     /*
      * nlmsg_pid是发送进程的端口号。
      * Linux内核不关心这个字段，仅用于跟踪消息。
@@ -91,9 +132,11 @@ int genl_send_msg(int sd, u_int16_t nlmsg_type, u_int32_t nlmsg_pid,
     msg.n.nlmsg_pid = nlmsg_pid;
     msg.g.cmd = genl_cmd;
     msg.g.version = genl_version;
+    printf("2\n"); 
     na = (struct nlattr *) GENLMSG_DATA(&msg);
     na->nla_type = nla_type;
     na->nla_len = nla_len + 1 + NLA_HDRLEN;
+    printf("3\n"); 
     memcpy(NLA_DATA(na), nla_data, nla_len);
     msg.n.nlmsg_len += NLMSG_ALIGN(na->nla_len);
 
@@ -141,7 +184,7 @@ static int genl_get_family_id(int sd, char *family_name)
     } else {
         id = 0;
     }
-
+   printf("id = %d\n", id);
     return id;
 }
 
@@ -149,6 +192,14 @@ int  main(void)
 {
     struct sockaddr_nl saddr;
     int                sock;
+    int id;
+    char * send_msg = "123456";
+    int ret;
+    char * data;
+    char * reply; /* the attrs */
+    
+    reply = malloc(32);
+
     sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
 
     if (sock < 0) {
@@ -157,13 +208,38 @@ int  main(void)
 
     memset(&saddr, 0, sizeof(saddr));
     saddr.nl_family = AF_NETLINK;
-    saddr.nl_pid = getpid();
+    saddr.nl_pid = 1234;
     if (bind(sock, (struct sockaddr*)&saddr, sizeof(saddr)) < 0) {
         printf("bind fail!\n");
         close(sock);
         return -1;
     }
-    genl_get_family_id(sock, "DOC_EXMPL");
+    
+    id = genl_get_family_id(sock, "EXMPL");
+    if (id <= 0) {
+	printf("maybe kernel register failed ! can`t find family ID\n");
+    }
+    
+    printf("find family ID = %d by family name\n", id);
+    data =(char*)malloc(256);
+    if(!data)
+    {
+        perror("malloc error!");
+        exit(1);
+    }
+    memset(data,0,256);
+    strcpy(data,"123456");
+    
+    ret = genl_send_msg(sock, id, 1234, EXMPL_C_ECHO, 1, EXMPL_A_MSG, (void *)data, strlen(data) + 1);
+    if (ret) {
+	printf("send failed\n");
+    }
+
+    printf("send success\n");
+
+    genl_rcv_msg(id, sock, reply);
+    
+    printf("recv mesg = %d\n", strlen(reply));    
 }
 
 

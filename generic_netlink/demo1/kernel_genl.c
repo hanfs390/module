@@ -1,67 +1,96 @@
-#include <net/sock.h>
+//##include <net/sock.h>
 #include <linux/module.h>
-
+#include <linux/rtnetlink.h>
 #include <linux/netlink.h>
 #include <net/genetlink.h>
-
+#include <linux/string.h>
+/********************************the same with user**********************************************/
 /* attribute type */
-  enum {
-        DOC_EXMPL_A_UNSPEC,
-        DOC_EXMPL_A_MSG,
-        __DOC_EXMPL_A_MAX,
-  };
-#define DOC_EXMPL_A_MAX (__DOC_EXMPL_A_MAX - 1)
-#define GENL_ID_GENERATE 0
-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-  /* family definition */
-  static struct genl_family doc_exmpl_gnl_family = {
-        .id = GENL_ID_GENERATE,
+enum {
+        EXMPL_A_UNSPEC, /* default */
+        EXMPL_A_MSG,
+	EXMPL_A_PRINT,
+        __EXMPL_A_MAX,
+};
+#define EXMPL_A_MAX (__EXMPL_A_MAX - 1)
+/* commands */
+enum {
+        EXMPL_C_UNSPEC,
+        EXMPL_C_ECHO,
+	EXMPL_C_PRINT,
+        __EXMPL_C_MAX,
+};
+#define EXMPL_C_MAX (__EXMPL_C_MAX - 1)
+/************************************************************************************************/
+
+
+/* family definition */
+static struct genl_family family = {
         .hdrsize = 0,
-        .name = "DOC_EXMPL",
+        .name = "EXMPL",
         .version = 1,
-        .maxattr = DOC_EXMPL_A_MAX,
+        .maxattr = EXMPL_A_MAX,
+};
 
-  };
 
-/* doit handler */
-int doc_exmpl_echo(struct sk_buff *skb, struct genl_info *info)
+
+/* 
+ * genl_register_family_with_ops_grps - assignemnt struct genl_ops to genl_family.ops and register family 
+ */
+static inline int
+_genl_register_family_with_ops_grps(struct genl_family *family,
+				    const struct genl_ops *ops, size_t n_ops,
+				    const struct genl_multicast_group *mcgrps,
+				    size_t n_mcgrps)
 {
-        /* message handling code goes here; return 0 on success, negative
-         * values on failure */
-	printk("echo replay");
-	return 0;	
+	family->module = THIS_MODULE; 
+	family->ops = ops;
+	family->n_ops = n_ops;
+	family->mcgrps = mcgrps;
+	family->n_mcgrps = n_mcgrps;
+	return genl_register_family(family);
 }
+#define genl_register_family_with_ops(family, ops)			\
+	_genl_register_family_with_ops_grps((family),			\
+					    (ops), ARRAY_SIZE(ops),	\
+					    NULL, 0)
 
 
-  /* attribute policy */
-  static struct nla_policy doc_exmpl_genl_policy[DOC_EXMPL_A_MAX + 1] = {
-        [DOC_EXMPL_A_MSG] = { .type = NLA_NUL_STRING },
-  };
 
-  /* commands */
-  enum {
-        DOC_EXMPL_C_UNSPEC,
-        DOC_EXMPL_C_ECHO,
-        __DOC_EXMPL_C_ECHO,
-  };
-  #define DOC_EXMPL_C_MAX (__DOC_EXMPL_C_MAX - 1)
+/* attribute policy */
+static struct nla_policy exmpl_genl_policy[EXMPL_A_MAX + 1] = {
+        [EXMPL_A_MSG] = { .type = NLA_NUL_STRING },
+};
 
-
-int genl_recv_doit(struct sk_buff *skb, struct genl_info *info)
+static int genl_fill_reply(struct sk_buff *msg, u32 portid, u32 seq, int flags, char * reply_data)
 {
-    /* doit 没有运行在中断上下文 */
-    struct nlmsghdr     *nlhdr;
-    struct genlmsghdr   *genlhdr;
-    struct nlattr       *nlh;
-    
-     nlhdr = nlmsg_hdr(skb);
-     genlhdr = nlmsg_data(nlhdr);
-     nlh = genlmsg_data(genlhdr);
-     printk("recv the message from userspace \n");
-     return 0;
-}
+	void *hdr;
 
-static inline int genl_msg_mk_usr_msg(struct sk_buff *skb, int type, void *data, int len)
+	/* Add generic netlink header to netlink message */
+	hdr = genlmsg_put(msg, 0, seq, &family, flags, EXMPL_C_ECHO);
+	if (!hdr)
+		goto out;
+
+	rtnl_lock();
+	if (nla_put_string(msg, EXMPL_A_MSG, reply_data))
+		goto nla_put_failure;
+	rtnl_unlock();
+	genlmsg_end(msg, hdr);
+	return 0;
+
+nla_put_failure:
+	rtnl_unlock();
+	genlmsg_cancel(msg, hdr);
+out:
+	return -EMSGSIZE;
+}
+/*
+ * 添加用户数据，及添加一个netlink addribute
+ * @type : nlattr的type
+ * @len : nlattr中的len (length of the whole nlattr)
+ * @data : 用户数据
+ */
+static inline int genl_msg_make_usr_msg(struct sk_buff *skb, int type, void *data, int len)
 {
     int rc;
 
@@ -83,21 +112,11 @@ static inline int genl_msg_prepare_usr_msg(u8 cmd, size_t size, pid_t pid, struc
     }
 
     /* Add a new netlink message to an skb */
-    genlmsg_put(skb, pid, 0, &doc_exmpl_gnl_family, 0, cmd);
+    genlmsg_put(skb, pid, 0, &family, 0, cmd);
 
     *skbp = skb;
     return 0;
 }
-void genl_register_ops(struct genl_family *family, const struct genl_ops *ops)
-{
-	family->module = THIS_MODULE;
-	family->ops = ops;
-	family->n_ops = ARRAY_SIZE(ops);
-
-}
-
-
-
 /** 
 * genl_msg_send_to_user - 通过generic netlink发送数据到netlink 
 *
@@ -118,13 +137,13 @@ int genl_msg_send_to_user(void *data, int len, pid_t pid)
 
     size = nla_total_size(len); /* total length of attribute including padding */
 
-    rc = genl_msg_prepare_usr_msg(DOC_EXMPL_C_ECHO, size, pid, &skb);
+    rc = genl_msg_prepare_usr_msg(EXMPL_C_ECHO, size, pid, &skb);
 
     if (rc) {
         return rc;
     }
 
-    rc = genl_msg_mk_usr_msg(skb, DOC_EXMPL_A_MSG, data, len);
+    rc = genl_msg_make_usr_msg(skb, EXMPL_A_MSG, data, len);
 
     if (rc) {
         kfree_skb(skb);
@@ -143,22 +162,58 @@ int genl_msg_send_to_user(void *data, int len, pid_t pid)
     return 0;
 }
 
+/* doit handler */
+int exmpl_echo(struct sk_buff *skb, struct genl_info *info)
+{
+	struct sk_buff *msg;
+	char * data = NULL;
+	char reply_data[10];	
+	int rc = -ENOBUFS;
 
-  /* operation definition */
-  struct genl_ops doc_exmpl_gnl_ops_echo = {
-        .cmd = DOC_EXMPL_C_ECHO,
-        .flags = 0,
-        .policy = doc_exmpl_genl_policy,
-        .doit = genl_recv_doit,
-        .dumpit = NULL,
-  };
+	data = nla_data(info->attrs[EXMPL_A_MSG]);
+	if (data[nla_len(info->attrs[EXMPL_A_MSG]) - 1] != '\0')
+		return -EINVAL;
+	printk("recv the msg = %s\n", data);
+	
+	strcpy(reply_data, data);
+	reply_data[strlen(data)] = '7';
+	reply_data[strlen(data) + 1] = '\0';
+	printk("reply_data = %s\n", reply_data);
+
+	/* alloc a netlink message */
+	msg = nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
+	if (!msg)
+		return rc;
+	rc = genl_fill_reply(msg, info->snd_portid, info->snd_seq, 0, reply_data);
+	if (rc < 0)
+		goto out_free;
+
+	return genlmsg_reply(msg, info);
+out_free:
+	nlmsg_free(msg);
+	return rc;
+}
+
+/* operation definition */
+struct genl_ops ops[] = { 
+	{
+	 	.cmd = EXMPL_C_ECHO,
+        	.flags = 0,
+        	.policy = exmpl_genl_policy,
+       		.doit = exmpl_echo,
+        	.dumpit = NULL,
+	},
+};
 
 static int  __init genl_init(void)
 {	
-		
-	genl_register_family(&doc_exmpl_gnl_family); 
-	genl_register_ops(&doc_exmpl_gnl_family, &doc_exmpl_gnl_ops_echo);
-	printk("genl_demo init\n");
+	int ret;		
+	ret = genl_register_family_with_ops(&family, ops);
+	if (ret) {
+		printk("register genl_family error=%d\n", ret);
+		return ret;
+	}
+	printk("genl_init\n");
 	return 0;	
 }	
 
@@ -166,8 +221,8 @@ static int  __init genl_init(void)
 static void __exit genl_exit(void)
 
 {
-	genl_unregister_family(&doc_exmpl_gnl_family); 
-	printk("genl_demo exit\n");
+	genl_unregister_family(&family); 
+	printk("genl_exit\n");
 }
 
 
@@ -176,11 +231,6 @@ module_exit(genl_exit);
 
 
 MODULE_LICENSE("GPL");
-
-
-
-
-
 
 
 

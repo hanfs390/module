@@ -4,44 +4,57 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-ARRAY_SIZE	kernel_genl.c	15;"	d	file:
-DOC_EXMPL_A_MAX	kernel_genl.c	13;"	d	file:
-DOC_EXMPL_A_MSG	kernel_genl.c	/^        DOC_EXMPL_A_MSG,$/;"	e	enum:__anon1	file:
-DOC_EXMPL_A_UNSPEC	kernel_genl.c	/^        DOC_EXMPL_A_UNSPEC,$/;"	e	enum:__anon1	file:
-DOC_EXMPL_C_ECHO	kernel_genl.c	/^        DOC_EXMPL_C_ECHO,$/;"	e	enum:__anon2	file:
-DOC_EXMPL_C_MAX	kernel_genl.c	47;"	d	file:
-DOC_EXMPL_C_UNSPEC	kernel_genl.c	/^        DOC_EXMPL_C_UNSPEC,$/;"	e	enum:__anon2	file:
+EXMPL_A_MAX	kernel_genl.c	15;"	d	file:
+EXMPL_A_MAX	user_genl.c	35;"	d	file:
+EXMPL_A_MSG	kernel_genl.c	/^        EXMPL_A_MSG,$/;"	e	enum:__anon1	file:
+EXMPL_A_MSG	user_genl.c	/^        EXMPL_A_MSG,$/;"	e	enum:__anon3	file:
+EXMPL_A_PRINT	kernel_genl.c	/^	EXMPL_A_PRINT,$/;"	e	enum:__anon1	file:
+EXMPL_A_PRINT	user_genl.c	/^	EXMPL_A_PRINT,$/;"	e	enum:__anon3	file:
+EXMPL_A_UNSPEC	kernel_genl.c	/^        EXMPL_A_UNSPEC, \/* default *\/$/;"	e	enum:__anon1	file:
+EXMPL_A_UNSPEC	user_genl.c	/^        EXMPL_A_UNSPEC,$/;"	e	enum:__anon3	file:
+EXMPL_C_ECHO	kernel_genl.c	/^        EXMPL_C_ECHO,$/;"	e	enum:__anon2	file:
+EXMPL_C_ECHO	user_genl.c	/^        EXMPL_C_ECHO,$/;"	e	enum:__anon4	file:
+EXMPL_C_MAX	kernel_genl.c	23;"	d	file:
+EXMPL_C_PRINT	kernel_genl.c	/^	EXMPL_C_PRINT,$/;"	e	enum:__anon2	file:
+EXMPL_C_PRINT	user_genl.c	/^	EXMPL_C_PRINT,$/;"	e	enum:__anon4	file:
+EXMPL_C_UNSPEC	kernel_genl.c	/^        EXMPL_C_UNSPEC,$/;"	e	enum:__anon2	file:
+EXMPL_C_UNSPEC	user_genl.c	/^        EXMPL_C_UNSPEC,$/;"	e	enum:__anon4	file:
 GENLMSG_DATA	user_genl.c	25;"	d	file:
-GENL_ID_GENERATE	kernel_genl.c	14;"	d	file:
 KERNELBUILD	Makefile	/^KERNELBUILD :=\/lib\/modules\/$(shell uname -r)\/build$/;"	m
 MAX_MSG_SIZE	user_genl.c	16;"	d	file:
 NLA_DATA	user_genl.c	26;"	d	file:
-__DOC_EXMPL_A_MAX	kernel_genl.c	/^        __DOC_EXMPL_A_MAX,$/;"	e	enum:__anon1	file:
-__DOC_EXMPL_C_ECHO	kernel_genl.c	/^        __DOC_EXMPL_C_ECHO,$/;"	e	enum:__anon2	file:
+__EXMPL_A_MAX	kernel_genl.c	/^        __EXMPL_A_MAX,$/;"	e	enum:__anon1	file:
+__EXMPL_A_MAX	user_genl.c	/^        __EXMPL_A_MAX,$/;"	e	enum:__anon3	file:
+__EXMPL_C_ECHO	user_genl.c	/^        __EXMPL_C_ECHO,$/;"	e	enum:__anon4	file:
+__EXMPL_C_MAX	kernel_genl.c	/^        __EXMPL_C_MAX,$/;"	e	enum:__anon2	file:
 __cached_gcc_-print-file-name_include	.cache.mk	/^__cached_gcc_-print-file-name_include := \/usr\/lib\/gcc\/i686-linux-gnu\/5\/include$/;"	m
+__this_module	kernel_genl.mod.c	/^__visible struct module __this_module$/;"	v	typeref:struct:module
+__used	kernel_genl.mod.c	/^__used$/;"	v	file:
+_genl_register_family_with_ops_grps	kernel_genl.c	/^_genl_register_family_with_ops_grps(struct genl_family *family,$/;"	f	file:
 data	user_genl.c	/^    char data[MAX_MSG_SIZE];$/;"	m	struct:msgtemplate	file:
-doc_exmpl_echo	kernel_genl.c	/^int doc_exmpl_echo(struct sk_buff *skb, struct genl_info *info)$/;"	f
-doc_exmpl_genl_policy	kernel_genl.c	/^  static struct nla_policy doc_exmpl_genl_policy[DOC_EXMPL_A_MAX + 1] = {$/;"	v	typeref:struct:nla_policy	file:
-doc_exmpl_gnl_family	kernel_genl.c	/^  static struct genl_family doc_exmpl_gnl_family = {$/;"	v	typeref:struct:genl_family	file:
-doc_exmpl_gnl_ops_echo	kernel_genl.c	/^  struct genl_ops doc_exmpl_gnl_ops_echo = {$/;"	v	typeref:struct:genl_ops
+exmpl_echo	kernel_genl.c	/^int exmpl_echo(struct sk_buff *skb, struct genl_info *info)$/;"	f
+exmpl_genl_policy	kernel_genl.c	/^static struct nla_policy exmpl_genl_policy[EXMPL_A_MAX + 1] = {$/;"	v	typeref:struct:nla_policy	file:
+exmpl_genl_policy	user_genl.c	/^static struct nla_policy exmpl_genl_policy[EXMPL_A_MAX + 1] = {$/;"	v	typeref:struct:nla_policy	file:
+family	kernel_genl.c	/^static struct genl_family family = {$/;"	v	typeref:struct:genl_family	file:
 g	user_genl.c	/^    struct genlmsghdr g;$/;"	m	struct:msgtemplate	typeref:struct:msgtemplate::genlmsghdr	file:
 gcc-goto.sh_gcc_-Wall_-Wundef_-Wstrict-prototypes_-Wno-trigraphs_-fno-strict-aliasing_-fno-common_-fshort-wchar_-Werror-implicit-function-declaration_-Wno-format-security_-std_gnu89_-fno-PIE_-mno-sse_-mno-mmx_-mno-sse2_-mno-3dnow_-mno-avx_-m32_-msoft-float_-mregparm_3_-freg-struct-return_-fno-pic_-mpreferred-stack-boundary_2__-march_i686_-mtune_generic_-Wa_-mtune_generic32_-ffreestanding_-DCONFIG_AS_CFI_1_-DCONFIG_AS_CFI_SIGNAL_FRAME_1_-DCONFIG_AS_CFI_SECTIONS_1__-DCONFIG_AS_SSSE3_1_-DCONFIG_AS_CRC32_1_-DCONFIG_AS_AVX_1_-DCONFIG_AS_AVX2_1_-DCONFIG_AS_AVX512_1_-DCONFIG_AS_SHA1_NI_1_-DCONFIG_AS_SHA256_NI_1_-pipe_-Wno-sign-compare_-fno-asynchronous-unwind-tables_-mindirect-branch_thunk-extern_-mindirect-branch-register_-DRETPOLINE_-fno-delete-null-pointer-checks_____-O2__--param_allow-store-data-races_0	.cache.mk	/^__cached_\/bin\/bash_.\/scripts\/gcc-goto.sh_gcc_-Wall_-Wundef_-Wstrict-prototypes_-Wno-trigraphs_-fno-strict-aliasing_-fno-common_-fshort-wchar_-Werror-implicit-function-declaration_-Wno-format-security_-std_gnu89_-fno-PIE_-mno-sse_-mno-mmx_-mno-sse2_-mno-3dnow_-mno-avx_-m32_-msoft-float_-mregparm_3_-freg-struct-return_-fno-pic_-mpreferred-stack-boundary_2__-march_i686_-mtune_generic_-Wa_-mtune_generic32_-ffreestanding_-DCONFIG_AS_CFI_1_-DCONFIG_AS_CFI_SIGNAL_FRAME_1_-DCONFIG_AS_CFI_SECTIONS_1__-DCONFIG_AS_SSSE3_1_-DCONFIG_AS_CRC32_1_-DCONFIG_AS_AVX_1_-DCONFIG_AS_AVX2_1_-DCONFIG_AS_AVX512_1_-DCONFIG_AS_SHA1_NI_1_-DCONFIG_AS_SHA256_NI_1_-pipe_-Wno-sign-compare_-fno-asynchronous-unwind-tables_-mindirect-branch_thunk-extern_-mindirect-branch-register_-DRETPOLINE_-fno-delete-null-pointer-checks_____-O2__--param_allow-store-data-races_0 := y$/;"	m
 gcc-version.sh_-p_gcc	.cache.mk	/^__cached_\/bin\/bash_.\/scripts\/gcc-version.sh_-p_gcc := 050400$/;"	m
 gcc-version.sh_gcc	.cache.mk	/^__cached_\/bin\/bash_.\/scripts\/gcc-version.sh_gcc := 0504$/;"	m
 genl_exit	kernel_genl.c	/^module_exit(genl_exit);$/;"	v
 genl_exit	kernel_genl.c	/^static void __exit genl_exit(void)$/;"	f	file:
+genl_fill_reply	kernel_genl.c	/^static int genl_fill_reply(struct sk_buff *msg, u32 portid, u32 seq, int flags, char * reply_data)$/;"	f	file:
 genl_get_family_id	user_genl.c	/^static int genl_get_family_id(int sd, char *family_name)$/;"	f	file:
 genl_init	kernel_genl.c	/^module_init(genl_init);$/;"	v
 genl_init	kernel_genl.c	/^static int  __init genl_init(void)$/;"	f	file:
-genl_msg_mk_usr_msg	kernel_genl.c	/^static inline int genl_msg_mk_usr_msg(struct sk_buff *skb, int type, void *data, int len)$/;"	f	file:
+genl_msg_make_usr_msg	kernel_genl.c	/^static inline int genl_msg_make_usr_msg(struct sk_buff *skb, int type, void *data, int len)$/;"	f	file:
 genl_msg_prepare_usr_msg	kernel_genl.c	/^static inline int genl_msg_prepare_usr_msg(u8 cmd, size_t size, pid_t pid, struct sk_buff **skbp)$/;"	f	file:
 genl_msg_send_to_user	kernel_genl.c	/^int genl_msg_send_to_user(void *data, int len, pid_t pid)$/;"	f
-genl_rcv_msg	user_genl.c	/^void genl_rcv_msg(int fid, int sock, char **string)$/;"	f
-genl_recv_doit	kernel_genl.c	/^int genl_recv_doit(struct sk_buff *skb, struct genl_info *info)$/;"	f
-genl_register_ops	kernel_genl.c	/^void genl_register_ops(struct genl_family *family, const struct genl_ops *ops)$/;"	f
+genl_rcv_msg	user_genl.c	/^void genl_rcv_msg(int family_id, int sock, char *data)$/;"	f
+genl_register_family_with_ops	kernel_genl.c	53;"	d	file:
 genl_send_msg	user_genl.c	/^int genl_send_msg(int sd, u_int16_t nlmsg_type, u_int32_t nlmsg_pid,$/;"	f
 main	user_genl.c	/^int  main(void)$/;"	f
 msgtemplate	user_genl.c	/^typedef struct msgtemplate {$/;"	s	file:
 msgtemplate_t	user_genl.c	/^} msgtemplate_t;$/;"	t	typeref:struct:msgtemplate	file:
 n	user_genl.c	/^    struct nlmsghdr n;$/;"	m	struct:msgtemplate	typeref:struct:msgtemplate::nlmsghdr	file:
 obj-m	Makefile	/^obj-m := kernel_genl.o$/;"	m
+ops	kernel_genl.c	/^struct genl_ops ops[] = { $/;"	v	typeref:struct:genl_ops

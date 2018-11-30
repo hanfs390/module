@@ -69,6 +69,18 @@ static struct nla_policy family3_genl_policy[FAMILY3_A_MAX + 1] = {
     [FAMILY3_A_MSG] = { .type = NLA_NUL_STRING, .len=100 },
 };
 
+static struct genl_family *genl_family_find_byname(char *name)
+{
+	struct genl_family *f;
+	int i;
+
+	for (i = 0; i < GENL_FAM_TAB_SIZE; i++)
+		list_for_each_entry(f, genl_family_chain(i), family_list)
+			if (strcmp(f->name, name) == 0)
+				return f;
+
+	return NULL;
+}
 // static struct nla_policy family3_genl_policy[FAMILY3_A_MAX + 1] = {
 //     [FAMILY3_A_MSG] = { .type = NLA_U32 },
 // };
@@ -390,6 +402,7 @@ struct genl_ops family3_gnl_ops_recv = {
     Module entry
 */
 static int __init gnKernel_init(void) {
+    struct genl_family *family;
     printk("Generic Netlink Example Module inserted.\n");
            
     /*
@@ -398,6 +411,8 @@ static int __init gnKernel_init(void) {
     genl_register_family_with_ops(&family1_gnl_family, &family1_gnl_ops_recv);
     genl_register_family_with_ops(&family2_gnl_family, &family2_gnl_ops_recv);
     genl_register_family_with_ops(&family3_gnl_family, &family3_gnl_ops_recv);
+    family = genl_family_find_byname("FAMILY1");
+    printk("family = %d", family->id);
 
     return 0;
 }
