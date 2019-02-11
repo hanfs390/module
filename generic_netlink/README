@@ -3,7 +3,7 @@
 	
 	demo1: echo
 	demo2: multi-cmds and multi-attrs
-	demo3: user program and kernel module have the same .h
+	demo3: user program and kernel module have the same .h, and use the libnl
 	demo4: has better makefile
 compile:
 	gcc user_genl.c -o hello $(pkg-config --cflags --libs libnl-3.0 libnl-genl-3.0)
