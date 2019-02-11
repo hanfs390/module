@@ -4,6 +4,8 @@
 #include <linux/netlink.h>
 #include <net/genetlink.h>
 #include <linux/string.h>
+#include "exmpl_genl.h"
+#if 0
 /********************************the same with user**********************************************/
 /* attribute type */
 enum {
@@ -22,7 +24,7 @@ enum {
 };
 #define EXMPL_C_MAX (__EXMPL_C_MAX - 1)
 /************************************************************************************************/
-
+#endif
 
 /* family definition */
 static struct genl_family family = {
@@ -99,6 +101,7 @@ static int genl_fill_int_reply(struct sk_buff *msg, u32 portid, u32 seq, int fla
 		goto nla_put_failure;
 	rtnl_unlock();
 	genlmsg_end(msg, hdr);
+	printk("sendreply\n");
 	return 0;
 
 nla_put_failure:
@@ -114,7 +117,9 @@ int exmpl_print(struct sk_buff *skb, struct genl_info *info)
 	char * data = NULL;
 	int rc = -ENOBUFS;
 	data = nla_data(info->attrs[EXMPL_A_PRINT]);
-	if (data[nla_len(info->attrs[EXMPL_A_PRINT]) - 1] != '\0')
+	if (data == NULL)
+		return -EINVAL;
+        if (data[nla_len(info->attrs[EXMPL_A_PRINT]) - 1] != '\0')
 		return -EINVAL;
 	printk("print : %s\n", data);
 	
@@ -138,9 +143,9 @@ int exmpl_echo(struct sk_buff *skb, struct genl_info *info)
 	char * data = NULL;
         char reply_data[10];
 	int rc = -ENOBUFS;
- 
+	printk("%s\n", __func__); 
         data = nla_data(info->attrs[EXMPL_A_MSG]);
-        if (data[nla_len(info->attrs[EXMPL_A_MSG]) - 1] != '\0')
+        if ((data == NULL) || (data[nla_len(info->attrs[EXMPL_A_MSG]) - 1] != '\0'))
                 return -EINVAL;
         printk("recv the msg = %s\n", data);
  

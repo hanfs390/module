@@ -14,6 +14,8 @@
 #include <netlink/attr.h>
 #include <netlink/genl/genl.h>
 #include <netlink/genl/ctrl.h>
+#include "exmpl_genl.h"
+#if 0
 #define MAX_MSG_SIZE 128
 #define GENLMSG_DATA(glh) ((void *)(NLMSG_DATA(glh) + GENL_HDRLEN))
 #define NLA_DATA(na) ((void *)((char*)(na) + NLA_HDRLEN))
@@ -43,222 +45,120 @@ enum {
 	EXMPL_C_PRINT,
         __EXMPL_C_ECHO,
 };
-
+#endif
 /* attribute policy */
 static struct nla_policy exmpl_genl_policy[EXMPL_A_MAX + 1] = {
          [EXMPL_A_MSG] = { .type = NLA_STRING },
          [EXMPL_A_PRINT] = { .type = NLA_U32 },
 };
 
-/*
- * genl_rcv_msg - recv the msg from kernel module 
- * @family_id :  genl family id 
- * @sock : the sock of genl
- * @data : the message from kernel
- */
-void genl_rcv_msg(int family_id, int sock, void *data)
+int parse_cb(struct nl_msg *msg, void *arg)
 {
-    int ret;
-    struct msgtemplate msg;
-    struct nlattr *na;
-    struct genlmsghdr *gnlh;
-    struct nlmsghdr *nlh;
-    struct nlattr *attrs[EXMPL_A_MAX + 1];
-    int len;
+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+	struct genlmsghdr *gnlh = nlmsg_data(nlh);
+	struct nlattr *attrs[EXMPL_A_MAX + 1];
+	int len;
+	int * reply;
+	char send_reply[10];
 
-    ret = recv(sock, &msg, sizeof(msg), 0);
-    if (ret < 0) {
-        return;
-    }
-    printf("received length %d\n", ret);
+	genlmsg_parse(nlh, 0, attrs, EXMPL_A_MAX, exmpl_genl_policy);
 
-    gnlh = &msg.g;
-    nlh = &msg.n;
-    genlmsg_parse(nlh, 0, attrs, EXMPL_A_MAX, exmpl_genl_policy);    
-    
-    switch (gnlh->cmd) {
-	case EXMPL_C_ECHO:
+	switch (gnlh->cmd){
+		
+    	case EXMPL_C_ECHO:
+		
+		printf("echo reply\n");		
 		if (attrs[EXMPL_A_MSG]){
 			len = nla_len(attrs[EXMPL_A_MSG]);
-			memcpy(data, nla_data(attrs[EXMPL_A_MSG]), len);
-			printf("recevic data = %s\n", (char *)data);
+                	memcpy(send_reply, nla_data(attrs[EXMPL_A_MSG]), len);
+            		printf("reply=%s\n", send_reply);
 		}
-		break;
+
+           	return NL_OK;
+			
 	case EXMPL_C_PRINT:
-		if (attrs[EXMPL_A_PRINT]){
-			len = nla_len(attrs[EXMPL_A_PRINT]);
-			*((int *)data) = *((int *)nla_data(attrs[EXMPL_A_PRINT]));
-			printf("recevic data = %d\n", *((int*)data));
-		}
-		break;
 		
-
-    }
-
-} 
-
-/** 
-* genl_send_msg - 通过generic netlink给内核发送数据 
-*
-* @sd: 客户端socket 
-* @nlmsg_type: family_id
-* @nlmsg_pid: 客户端pid
-* @genl_cmd: 命令类型
-* @genl_version: genl版本号
-* @nla_type: netlink attr类型
-* @nla_data: 发送的数据
-* @nla_len: 发送数据长度
-*
-* return: 
-*    0:       成功 
-*    -1:      失败
-*/
-int genl_send_msg(int sd, u_int16_t nlmsg_type, u_int32_t nlmsg_pid,
-        u_int8_t genl_cmd, u_int8_t genl_version, u_int16_t nla_type,
-        void *nla_data, int nla_len)
-{
-    struct nlattr *na;
-    struct sockaddr_nl nladdr;
-    int r, buflen;
-    char *buf;
-
-	
-    msgtemplate_t msg;
-
-    printf("send is start\n");
-    if (nlmsg_type == 0) {
-        return 0;
-    }
-
-    msg.n.nlmsg_len = NLMSG_LENGTH(GENL_HDRLEN);
-    msg.n.nlmsg_type = nlmsg_type;
-    msg.n.nlmsg_flags = NLM_F_REQUEST;
-    msg.n.nlmsg_seq = 0;
-    /*
-     * nlmsg_pid是发送进程的端口号。
-     * Linux内核不关心这个字段，仅用于跟踪消息。
-     */
-    msg.n.nlmsg_pid = nlmsg_pid;
-    msg.g.cmd = genl_cmd;
-    msg.g.version = genl_version;
-    na = (struct nlattr *) GENLMSG_DATA(&msg);
-    na->nla_type = nla_type;
-    na->nla_len = nla_len + 1 + NLA_HDRLEN;
-    memcpy(NLA_DATA(na), nla_data, nla_len);
-    msg.n.nlmsg_len += NLMSG_ALIGN(na->nla_len);
-
-    printf("send msg : %s\n", (char *)nla_data);
-    buf = (char *) &msg;
-    buflen = msg.n.nlmsg_len ;
-    memset(&nladdr, 0, sizeof(nladdr));
-    nladdr.nl_family = AF_NETLINK;
-    while ((r = sendto(sd, buf, buflen, 0, (struct sockaddr *) &nladdr
-            , sizeof(nladdr))) < buflen) {
-        if (r > 0) {
-            buf += r;
-            buflen -= r;
-        } else if (errno != EAGAIN) {
-            return -1;
+		printf("print reply\n");		
+		if (attrs[EXMPL_A_PRINT]){
+                	reply = nla_data(attrs[EXMPL_A_PRINT]);
+            		printf("reply=%d\n", *reply);
+		}
+           	return NL_OK;
+		
+				
+       	default:
+            return NL_SKIP;
         }
-    }
-    return 0;
+
+    return NL_OK;
+	
 }
 
-static int genl_get_family_id(int sd, char *family_name)
+int send_string(struct nl_sock *sock, int family_id, int cmd, int attr_type, char * send_msg)
 {
-    msgtemplate_t ans;
-    int id, rc;
-    struct nlattr *na;
-    int rep_len;
-
-    rc = genl_send_msg(sd, GENL_ID_CTRL, 0, CTRL_CMD_GETFAMILY, 1,
-                    CTRL_ATTR_FAMILY_NAME, (void *)family_name,
-                    strlen(family_name)+1);
-
-
-    rep_len = recv(sd, &ans, sizeof(ans), 0);
-    if (rep_len < 0) {
-        return 0;
+    struct nl_msg *msg;
+    int ret = 0;
+    msg = nlmsg_alloc();
+    if (msg == NULL)
+    {
+        printf("Unable to allocate message\n");
+        return -1;
     }
-    if (ans.n.nlmsg_type == NLMSG_ERROR || !NLMSG_OK((&ans.n), rep_len)) {
-        return 0;
-    }
+    printf("%s\n", send_msg);
+    genlmsg_put(msg, NL_AUTO_PID, NL_AUTO_SEQ, family_id, 0, 0, cmd, 1);
+    nla_put(msg, attr_type, (strlen(send_msg)+1), send_msg);
 
-    na = (struct nlattr *) GENLMSG_DATA(&ans);
-    na = (struct nlattr *) ((char *) na + NLA_ALIGN(na->nla_len));
-    if (na->nla_type == CTRL_ATTR_FAMILY_ID) {
-        id = *(__u16 *) NLA_DATA(na);
-    } else {
-        id = 0;
+    ret = nl_send_auto_complete(sock, msg);
+    nlmsg_free(msg);
+    if (ret < 0)
+    {
+     	printf("nl_send_auto_complete failed\n");
+        return ret;
     }
-   printf("id = %d\n", id);
-    return id;
+    printf("nl_send_auto_complete success,ret = %d\n",ret);
 }
+
 
 int  main(void)
 {
-    struct sockaddr_nl saddr;
-    int                sock;
-    int id;
+    struct  nl_sock * demo_sock;
     char * send_msg = "123456";
-    int ret;
-    char * data;
-    void * reply; /* the attrs */
     char * print_data = "Hello Word !";
-    reply = malloc(32);
+    struct nl_msg *msg;
+    int ret = 0;
+    int id = 0;
+    int arg = 15;
 
-    sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
-
-    if (sock < 0) {
-        return -1;
-    }
-
-    memset(&saddr, 0, sizeof(saddr));
-    saddr.nl_family = AF_NETLINK;
-    saddr.nl_pid = 1234;
-    if (bind(sock, (struct sockaddr*)&saddr, sizeof(saddr)) < 0) {
-        printf("bind fail!\n");
-        close(sock);
-        return -1;
-    }
-    
-    /* self-defining function to get family id */
-    id = genl_get_family_id(sock, "EXMPL");
-    if (id <= 0) {
-	printf("maybe kernel register failed ! can`t find family ID\n");
-    }
-    
-    printf("find family ID = %d by family name\n", id);
-    data =(char*)malloc(256);
-    if(!data)
+    demo_sock = nl_socket_alloc();
+    if(demo_sock == NULL)
     {
-        perror("malloc error!");
-        exit(1);
+        printf("Unable to allocate socket\n");
+	return -1;
     }
-    memset(data,0,256);
-    strcpy(data,"123456");
+
+    ret = genl_connect(demo_sock);
+    if(ret < 0)
+    {
+		printf("genl sock connect failed\n");
+		return -1;
+    }
+
+    id = genl_ctrl_resolve(demo_sock, "EXMPL");
+
+    nl_socket_disable_seq_check(demo_sock);
+    nl_socket_modify_cb(demo_sock, NL_CB_VALID, NL_CB_CUSTOM, parse_cb, &arg);
+    printf("id = %d\n", id);
     
-    ret = genl_send_msg(sock, id, 1234, EXMPL_C_ECHO, 1, EXMPL_A_MSG, (void *)data, strlen(data) + 1);
-    if (ret) {
-	printf("send failed\n");
-    }
-
-    printf("send success\n");
-    genl_rcv_msg(id, sock, reply);
-    printf("recv mesg = %d\n", strlen((char*)reply));    
-
-
-    strcpy(data, print_data);
-    printf("kernel print :%s\n", print_data);
-    ret = genl_send_msg(sock, id, 1234, EXMPL_C_PRINT, 1, EXMPL_A_PRINT, (void *)data, strlen(data) + 1);
-    if (ret) {
-	printf("send failed\n");
-    }
-    printf("send success\n");
-    genl_rcv_msg(id, sock, reply);
-   
-    return 0; 
-
+    send_string(demo_sock, id, EXMPL_C_PRINT, EXMPL_A_PRINT, print_data);
+    nl_recvmsgs_default(demo_sock);
+    nl_recvmsgs_default(demo_sock);
+    printf("OK1\n"); 
+    send_string(demo_sock, id, EXMPL_C_ECHO, EXMPL_A_MSG, send_msg);
+    nl_recvmsgs_default(demo_sock);
+    nl_recvmsgs_default(demo_sock); /* why it need recv twice */
+    printf("OK2\n"); 
+    nl_socket_free(demo_sock);
+    return 0;
 }
 
 

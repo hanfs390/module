@@ -240,6 +240,7 @@ int  main(void)
     genl_rcv_msg(id, sock, reply);
     
     printf("recv mesg = %d\n", strlen(reply));    
+    close(sock);
 }
 
 

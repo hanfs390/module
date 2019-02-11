@@ -5,7 +5,7 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 EXMPL_A_MAX	kernel_genl.c	15;"	d	file:
-EXMPL_A_MAX	user_genl.c	35;"	d	file:
+EXMPL_A_MAX	user_genl.c	37;"	d	file:
 EXMPL_A_MSG	kernel_genl.c	/^        EXMPL_A_MSG,$/;"	e	enum:__anon1	file:
 EXMPL_A_MSG	user_genl.c	/^        EXMPL_A_MSG,$/;"	e	enum:__anon3	file:
 EXMPL_A_PRINT	kernel_genl.c	/^	EXMPL_A_PRINT,$/;"	e	enum:__anon1	file:
@@ -19,17 +19,16 @@ EXMPL_C_PRINT	kernel_genl.c	/^	EXMPL_C_PRINT,$/;"	e	enum:__anon2	file:
 EXMPL_C_PRINT	user_genl.c	/^	EXMPL_C_PRINT,$/;"	e	enum:__anon4	file:
 EXMPL_C_UNSPEC	kernel_genl.c	/^        EXMPL_C_UNSPEC,$/;"	e	enum:__anon2	file:
 EXMPL_C_UNSPEC	user_genl.c	/^        EXMPL_C_UNSPEC,$/;"	e	enum:__anon4	file:
-GENLMSG_DATA	user_genl.c	25;"	d	file:
+GENLMSG_DATA	user_genl.c	18;"	d	file:
+GENLMSG_PAYLOAD	user_genl.c	19;"	d	file:
 KERNELBUILD	Makefile	/^KERNELBUILD :=\/lib\/modules\/$(shell uname -r)\/build$/;"	m
-MAX_MSG_SIZE	user_genl.c	16;"	d	file:
-NLA_DATA	user_genl.c	26;"	d	file:
+MAX_MSG_SIZE	user_genl.c	17;"	d	file:
+NLA_DATA	user_genl.c	20;"	d	file:
 __EXMPL_A_MAX	kernel_genl.c	/^        __EXMPL_A_MAX,$/;"	e	enum:__anon1	file:
 __EXMPL_A_MAX	user_genl.c	/^        __EXMPL_A_MAX,$/;"	e	enum:__anon3	file:
 __EXMPL_C_ECHO	user_genl.c	/^        __EXMPL_C_ECHO,$/;"	e	enum:__anon4	file:
 __EXMPL_C_MAX	kernel_genl.c	/^        __EXMPL_C_MAX,$/;"	e	enum:__anon2	file:
 __cached_gcc_-print-file-name_include	.cache.mk	/^__cached_gcc_-print-file-name_include := \/usr\/lib\/gcc\/i686-linux-gnu\/5\/include$/;"	m
-__this_module	kernel_genl.mod.c	/^__visible struct module __this_module$/;"	v	typeref:struct:module
-__used	kernel_genl.mod.c	/^__used$/;"	v	file:
 _genl_register_family_with_ops_grps	kernel_genl.c	/^_genl_register_family_with_ops_grps(struct genl_family *family,$/;"	f	file:
 data	user_genl.c	/^    char data[MAX_MSG_SIZE];$/;"	m	struct:msgtemplate	file:
 exmpl_echo	kernel_genl.c	/^int exmpl_echo(struct sk_buff *skb, struct genl_info *info)$/;"	f

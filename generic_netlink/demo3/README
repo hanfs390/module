@@ -11,7 +11,7 @@ function:
 	
 		kernel reply unsigned int (1) to user
 additional:
-	user program has a new way to build sock and get family id by libnl
+	user program build using libnl
 
 architecture:
 	Kernel modules and user programs have the same header files for easy modification

@@ -255,7 +255,7 @@ int  main(void)
     }
     printf("send success\n");
     genl_rcv_msg(id, sock, reply);
-   
+    close(sock);   
     return 0; 
 
 }
