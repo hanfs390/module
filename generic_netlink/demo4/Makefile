@@ -1,4 +1,6 @@
-obj-m += nl_kern.o
+KERNEL_TARGET=kernel_genl
+USER_TARGET=user_genl
+obj-m += $(KERNEL_TARGET).o
 
 all: kernel-module-uninstall kernel-clean-ring-buffer kernel-build kernel-clean-temporary kernel-module-install user-build
 	@tput setaf 3
@@ -30,12 +32,12 @@ kernel-module-install:
 	@tput setaf 1
 	@echo "    kernel-module-install"
 	@tput sgr0
-	-sudo insmod nl_kern.ko
+	-sudo insmod $(KERNEL_TARGET).ko
 kernel-module-uninstall:
 	@tput setaf 1
 	@echo "    kernel-module-uninstall"
 	@tput sgr0
-	-sudo rmmod nl_kern
+	-sudo rmmod $(KERNEL_TARGET)
 kernel-clean-ring-buffer:
 	@tput setaf 1
 	@echo "    kernel-clean-ring-buffer"
@@ -48,9 +50,9 @@ user-build:
 	@tput setaf 1
 	@echo "    user-build"
 	@tput sgr0
-	gcc user/nl_user.c -lpthread -o nl_user.out
+	gcc $(USER_TARGET).c -o hello `pkg-config --cflags --libs libnl-3.0 libnl-genl-3.0`
 user-clean:
 	@tput setaf 1
 	@echo "    user-clean"
 	@tput sgr0
-	rm -rf *.out
+	rm -rf *.o hello
